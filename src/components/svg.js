@@ -1,15 +1,12 @@
 
 export function LeftArrow() {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43" fill="none">
-                                    <path d="M16.0483 40.0358H27.3586C36.7838 40.0358 40.5539 36.2657 40.5539 26.8405V15.5303C40.5539 6.10505 36.7838 2.33496 27.3586 2.33496H16.0483C6.62311 2.33496 2.85303 6.10505 2.85303 15.5303V26.8405C2.85303 36.2657 6.62311 40.0358 16.0483 40.0358Z" stroke="#211E61" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M19.3281 27.8399L25.9635 21.1857L19.3281 14.5315" stroke="#211E61" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+        <svg className="leftArrow" xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43" fill="none">
+            <path d="M16.0483 40.0358H27.3586C36.7838 40.0358 40.5539 36.2657 40.5539 26.8405V15.5303C40.5539 6.10505 36.7838 2.33496 27.3586 2.33496H16.0483C6.62311 2.33496 2.85303 6.10505 2.85303 15.5303V26.8405C2.85303 36.2657 6.62311 40.0358 16.0483 40.0358Z" stroke="#211E61" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19.3281 27.8399L25.9635 21.1857L19.3281 14.5315" stroke="#211E61" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
     )
 }
-
-
-
 export function FileSvg() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="46" viewBox="0 0 48 46" fill="none">

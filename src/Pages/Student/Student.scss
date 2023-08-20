@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500&family=Poppins:ital,wght@0,500;0,700;0,800;1,600;1,700;1,800&display=swap');
 
-
+.MobHeader, .MoblieNav {
+    display: none;
+}
 section.CenterSection {
     display: flex;
     flex-direction: column;
@@ -11,10 +13,8 @@ section.CenterSection {
     position: relative;
     height: 100vh;
     font-family: Nunito;
- 
-    .MobHeader, .MoblieNav {
-        display: none;
-    }
+   
+    
     h1 {
         align-self: flex-start;
         margin-left: 60px;
@@ -23,16 +23,87 @@ section.CenterSection {
         font-size: 32px;
     }
     .SearchBar {
-        width: 90%;
+        width: 15%;
         border-bottom: 2px solid #DFE5F1;
-        padding: 25px;
+        padding: 5px;
         align-self: flex-start;
-  
+        min-height: 10px;
+        transition: 1s  ease;
         color: #C8D0DF;
+        position: fixed;
+        z-index: 1;
+        background-color: #FFF;
+        button {
+            background-color: rgba(0, 0, 0, 0.0);
+            border: none;
+            cursor: pointer;
+            &.close {
+                &:hover {
+                    svg {
+                    color: red;
+                    }
+                }
+            }
+            svg {
+                color: #C8D0DF;
+                
+               
+            }
+        }
+        .Card {
+            min-height: 0px;
+            display: none;
+            margin-top: 15px;
+            width: 90%;
+            z-index: 0;
+            &#opened {
+                display: block;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+                font-size: 13px;
+            }
+            div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                margin-top: 00px;
+                transition: 0.2s;
+                padding:5px;
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+                .Text{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0px;
+                    align-items: flex-start;
+                    justify-content: center;
+                    h3 {
+                        color: #6E7781;
+                    font-family: Poppins;
+                    font-size: 13px;
+                    font-weight: 500;
+                    }
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.0);
+
+                    }
+                }
+            }
+            img {
+                border-radius: 10px;
+                width: 70px;
+                height: 50px;
+            }
+        }
         input {
             border: none;
             outline:none;
             margin-left: 20px;
+            width: 50%;
         }
       
     }
@@ -41,6 +112,7 @@ section.CenterSection {
         display: flex;
         flex-direction: row;
         gap: 30px;
+        margin-top: 6%;
        flex-wrap: wrap;
         div.TestReminder,  div.Pedagog{
             flex: 1 1;
@@ -99,6 +171,7 @@ section.CenterSection {
                 }
             }
         }
+       
     }
 
     .FilterOptions {
@@ -115,45 +188,41 @@ section.CenterSection {
         div {
             padding: 0px 20px;
             border-radius: 10px;
-            z-index: 1;
+          
+            cursor: pointer;
+            transition: 0.3s;
+            &:hover {
+                background-color: #FFF;
+
+            }
             &.clicked {
                 background-color: #FFF;
             }
         }
-        #gr {
-            text-align: left;
         
-            float: left;
-            margin-right: auto;
-            order: 1;
-            position: absolute;
-            width: 100px;
-            height: 10px;
-            background-color: white;
-            z-index: 0;
-            padding: 5px;
-            border-radius: 20px;
-        }
     }
  
     
         .Moduli {    
-
-
             display: flex;
             flex-wrap: wrap;
             gap: 40px;         
             width: 90%;
             height: 20px;
             margin-top: 50px;
+           
+            ::after {
+                content: "";
+                padding-bottom: 150px;
+            }
             a {
                 flex: 5 5 200px;
                 text-decoration: none;
                 color: initial;
             }
             div.Course {
-            flex: 5 5 200px;
-                height: 190px;
+                flex: 5 5 200px;
+                height: 220px;
                 display: flex;
                 flex-direction: column;
                 gap: 5px;
@@ -162,9 +231,15 @@ section.CenterSection {
                 border-radius: 20px;
                 padding: 7px;
                 font-family: Poppins;
+                transition: 0.3s;
+             
+                &:hover {
+                    //transform: translateY(-15px);
+                    transform: scale(1.06);
+                }
                 img {
                     width: 100%;
-                    height: 85px;
+                    height: 110px;
                     border-radius: 20px;
                     object-fit: cover;
                 }
@@ -186,7 +261,7 @@ section.CenterSection {
 
             }
         
-        
+          
     }
 }
 
@@ -195,40 +270,101 @@ section.CenterSection {
         justify-content: center;
 
     }
-    section.CenterSection {
-        width: 100vw;
-        padding-top: 30px;
-        .SearchBar {
-            display: none;
-        }
-        .MobHeader {
-            
-            position: fixed;
-            top: 0px;
-            width: 100%;
-            height: 60px;
-            background-color: #FFF;
-            display: flex;
-            align-items: center;
-            display: flex;
-            padding-left: 30px;
-    box-shadow: -8px 0px 80px 0px rgba(0, 0, 0, 0.09);
-          
-            
-            justify-content: space-between;
+   
+    .Moduli {    
+        margin-top: 20px;
+        div.Course {
             img {
-                width: 40px;
-            }
-            svg {
-                margin-right: 50px;
-                height: 1.5em;
+                width: 100%;
+                height: 100%;
             }
         }
     }
+    h1 {
+        font-size: 20px;
+    }
+    section.CenterSection {
+        width: 100vw;
+        padding-top: 30px;
+        h1 {
+            font-size: 20px;
+        
+        }
+        .SearchBar {
+            display: none;
+        }
+        .Moduli {
+            margin-top: 20px;
+            h1 {
+                font-size: 20px;
+            }
+        }
+        .Reminders {
+            div.TestReminder,  div.Pedagog{
+                height: 80px;
+                p{
+                    font-size: 10px;
+                }
+                h2 {
+                    font-size:15px;
+                }
+                &.Pedagog {
+                    img {
+                        width: 80px;
+                    }
+                    p {
+                       
+                        display: none;
+                    }
+                    button {
+                    
+                        font-size: 7px;
+                        white-space: nowrap;
+                       
+                    }
+                }
+                img {
+                    width: 40px;
+                }
+                #text {
+                    height: 50px;
+                    p {
+                        font-size: 10px;
+                    }
+                }
+            }
+           
+        }
+
+        
     nav {
         display: none;
     }
 
+}
+@media only screen and (max-width:425px){
+    section.CenterSection {
+        .FilterOptions {
+            background-color: #fff;
+              div {
+               
+                  background-color: #fff;
+                  border: 1px solid #DFE5F1;
+                  &:hover {
+                      background-color: #FFF;
+                        
+                  }
+                  &.clicked {
+                      background-color: #211E61;
+                  border: 1px solid #211E61;
+                    color:#fff;
+                  }
+              }
+              
+          }
+          
+    }
+    }
 }
 .MuiBox-root {
     margin-top: 10px;
