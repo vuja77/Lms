@@ -39,7 +39,7 @@ function App() {
   return (
     <>
     
-    <BrowserRouter>
+    <BrowserRouter basename={Config.basename}>
     <Routes>
       <Route path="/" element={<><Nav data={userMail} /> <SideBar data={userMail}/></>}>
         <Route index element={userRole === 1 ? <Student data1={userClass}/> : userRole === 2 ? <Professor data={userID}/> : ""} />
