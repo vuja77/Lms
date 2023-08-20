@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import "./UploadForm.scss";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Config from "../../Config";
+
 function LessonAdd(props) {
     const location = useLocation();
     console.log(location.state);
@@ -25,7 +27,7 @@ function LessonAdd(props) {
  
         useEffect(() => {
             const EdPrograms = async () => {
-                const className = await fetch("http://127.0.0.1:8000/api/getclass/"+props.userId);
+                const className = await fetch(Config.apiUrl+"/getclass/"+props.userId);
                 const resCl = await className.json();
                 setCls(resCl);
             }
@@ -52,7 +54,7 @@ function LessonAdd(props) {
         console.log(event.target.value);
     }   
     const createLesson = () => {
-            axios.post("http://127.0.0.1:8000/api/lesson", {
+            axios.post(Config.apiUrl+"/lesson", {
                 name: LessonName,
                 course_id: location.state,
                 section: Ishod
@@ -72,7 +74,7 @@ function LessonAdd(props) {
             Object.values(file).map((e) => {
             return formData.append("files[]", e);
         })
-        axios.post("http://127.0.0.1:8000/api/lesson", {
+        axios.post(Config.apiUrl+"/lesson", {
             name: LessonName,
             course_id: Course,
             section: Ishod
@@ -80,7 +82,7 @@ function LessonAdd(props) {
         .then((response) => {
             console.log(response.data.id);
             formData.append("lesson_id", response.data.id);
-            axios.post("http://127.0.0.1:8000/api/Material", formData, {
+            axios.post(Config.apiUrl+"/Material", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },})
@@ -99,7 +101,7 @@ function LessonAdd(props) {
             Object.values(file).map((e) => {
             return formData.append("files[]", e);
         })
-        axios.post("http://127.0.0.1:8000/api/Material", formData, {
+        axios.post(Config.apiUrl+"/Material", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },})
