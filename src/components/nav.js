@@ -6,7 +6,7 @@ import { Outlet, Link } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import UserPhoto from "./img/user.jpg";
 import { useState } from "react";
-import Config from "../Config.js.example";
+import Config from "../Config.js";
 import LeftArrow from "./img/LeftArrow.svg"
 import { useLocation } from "react-router-dom";
 

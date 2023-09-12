@@ -3,7 +3,7 @@ import "./Profile.scss"
 
 import {useState} from "react";
 
-import Config from "../../Config.js.example";
+import Config from "../../Config.js";
 import { memo } from "react";
 
 import UserPhoto from "../../components/img/user.jpg";

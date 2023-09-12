@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LoadingScreen from "../../components/LoadingScreen";
-import Config from "../../Config.js.example";
+import Config from "../../Config.js";
 import { memo } from "react";
 
 import LessonAdd from "../../components/UploadForm";

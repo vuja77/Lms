@@ -6,7 +6,7 @@ import { FileSvg, DownloadSvg } from "../../components/svg.js"
 import { useEffect, useState, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 import LessonAdd from "../../components/UploadForm";
-import Config from "../../Config.js.example";
+import Config from "../../Config.js";
 import leftArrow from "../../components/img/LeftArrow.svg";
 import EmptyState from "../../components/img/EmptyState.svg"
 import { Media, Video } from '@vidstack/player-react';

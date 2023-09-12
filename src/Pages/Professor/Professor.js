@@ -7,7 +7,7 @@ import Lesson from "../../components/img/Lesson.svg";
 import {useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LessonAdd from "../../components/UploadForm";
-import Config from "../../Config.js.example";
+import Config from "../../Config.js";
 import leftArrow from "../../components/img/LeftArrow.svg";
 
 function Professor(props) {

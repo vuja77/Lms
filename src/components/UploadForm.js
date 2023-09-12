@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 import "./UploadForm.scss";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Config from "../Config.js.example";
+import Config from "../Config.js";
 
 function LessonAdd(props) {
     const location = useLocation();

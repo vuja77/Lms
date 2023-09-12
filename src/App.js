@@ -6,7 +6,7 @@ import Course from "./Pages/Course/Course.js";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SideBar from "./components/SideBar.js";
 import { useEffect, useState } from "react";
-import Config from "./Config.js.example";
+import Config from "./Config.js";
 function App() {
   let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)token*\=\s*([^;]*).*$)|^.*$/, "$1");
   const [userMail, setMail] = useState();
