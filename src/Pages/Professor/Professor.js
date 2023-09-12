@@ -1,18 +1,21 @@
 import "./Professor.scss"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass, faSquareCaretRight, faXmark} from "@fortawesome/free-solid-svg-icons"
 import Calendar from "../../components/img/Calendar.png";
 import Homework from "../../components/img/Homework.svg";
 import Lesson from "../../components/img/Lesson.svg";
-import { useEffect, useState, useRef } from "react";
+import {useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LessonAdd from "../../components/UploadForm";
-import Config from "../../Config";
+import Config from "../../Config.js.example";
+import leftArrow from "../../components/img/LeftArrow.svg";
+
 function Professor(props) {
     const [Classes, setClasses] = useState([]);
     const [LessonPopUp, setPopUp] = useState(false);
     const [Search, setSearch] = useState("");
-
+    const [Scroll, setScroll] = useState(0);
+    const reminders = useRef();
     const ref = useRef(null);
     useOutsideAlerter(ref);
   useEffect(() => {
@@ -72,7 +75,7 @@ function Professor(props) {
                            
                         </div>
                     </div>
-        <div className="Reminders">
+        <div className="Reminders" ref={reminders} onScroll={(e)=> setScroll(e.target.scrollLeft)}>
             <div className="TestAdd">
                 <img src={Calendar} alt="" />         
                 <h2>Kreiraj Test</h2>
@@ -86,6 +89,11 @@ function Professor(props) {
                 <h2>Dodaj domaci</h2>
             </div>
         </div>
+        <div className="Dots">
+                        <span id={Scroll > 310 ?"" : "active"} onClick={() => reminders.current.scrollLeft = 0}></span>
+                        <span id={Scroll < 310 ?"" : "active"} onClick={() => reminders.current.scrollLeft = 312}></span>
+                        <span id={Scroll < 620 ?"" : "active"} onClick={() => reminders.current.scrollLeft = 622}></span>
+                    </div>
             <h1>Odeljenja</h1>
            
                 <div className="Classes">
@@ -99,14 +107,14 @@ function Professor(props) {
                                                 <h1>{item.name}</h1>
                                                 <p>{item.course_name}</p>
                                             </div>
-                                            <FontAwesomeIcon icon={faSquareCaretRight} size="2x"/>
+                                            <img src={leftArrow} alt="" />
                                         </div>
                                     </Link>
                                     );
                         })
                     }
         
-
+                    <div className="brake"></div>
                 </div>
        
         </section>

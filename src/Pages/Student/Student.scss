@@ -23,9 +23,9 @@ section.CenterSection {
         font-size: 32px;
     }
     .SearchBar {
-        width: 15%;
+        width: 90%;
         border-bottom: 2px solid #DFE5F1;
-        padding: 5px;
+        padding: 25px;
         align-self: flex-start;
         min-height: 10px;
         transition: 1s  ease;
@@ -280,28 +280,62 @@ section.CenterSection {
             }
         }
     }
-    h1 {
-        font-size: 20px;
-    }
+ 
     section.CenterSection {
         width: 100vw;
         padding-top: 30px;
         h1 {
-            font-size: 20px;
-        
+            font-size: 25px;
+             margin-left: 25px;
+            
         }
         .SearchBar {
-            display: none;
+           width: 75%;
+           margin-top: 40px;
+           align-self: center;
+           position: unset;
+           background-color: #E3E3E3;
+           border-bottom: 0px;
+           border-radius: 20px;
+           padding: 10px;
+           z-index: 0;
+           input {
+            background-color: #E3E3E3;
+           }
         }
         .Moduli {
             margin-top: 20px;
-            h1 {
-                font-size: 20px;
+           
+        }
+        .Dots {
+            display: flex;
+            flex-direction: row;
+            gap:10px;
+            span {
+                width: 10px;
+                height: 10px;
+                
+                aspect-ratio: 1/1;
+                background-color: #E3E3E3;
+                border-radius: 100px;
+                &#active {
+                    width: 20px;
+                }
             }
         }
         .Reminders {
+            scroll-behavior: smooth;
+            padding: 20px;
+            padding-bottom: 0px;
+            margin-top: 10px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            width: 300px;
+            scroll-snap-type: both mandatory;
             div.TestReminder,  div.Pedagog{
                 height: 80px;
+                min-width: 250px;
+                flex: 1 ;
                 p{
                     font-size: 10px;
                 }
@@ -309,6 +343,7 @@ section.CenterSection {
                     font-size:15px;
                 }
                 &.Pedagog {
+                    //display: none;
                     img {
                         width: 80px;
                     }

@@ -1,16 +1,18 @@
 import "./Course.scss"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faMagnifyingGlass, faPlay, faPlus, faXmark} from "@fortawesome/free-solid-svg-icons"
+import { faEllipsisVertical, faEye, faMagnifyingGlass, faPlay, faPlus, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons"
 import Logo from "../../components/img/logo.svg";
-import {FileSvg, DownloadSvg} from "../../components/svg.js"
+import { FileSvg, DownloadSvg } from "../../components/svg.js"
 import { useEffect, useState, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 import LessonAdd from "../../components/UploadForm";
-import Config from "../../Config";
+import Config from "../../Config.js.example";
 import leftArrow from "../../components/img/LeftArrow.svg";
 import EmptyState from "../../components/img/EmptyState.svg"
-import {Media, Video } from '@vidstack/player-react';
+import { Media, Video } from '@vidstack/player-react';
 import moment from 'moment';
+
+import axios from "axios";
 
 function Course(props) {
     const ref = useRef(null);
@@ -20,214 +22,398 @@ function Course(props) {
     const [Course, setCourse] = useState([]);
     const [Lesson, setLesson] = useState([]);
     const [Matetials, setMatetials] = useState([]);
+    const [Homework, setHomework] = useState([]);
+    const [HomeworkUploads, setHomeworkUploads] = useState([]);
     const [MaterialVeiw, setMaterialVeiw] = useState("false");
     const [showFiles, setShow] = useState();
     const [FileUploadForm, setFileUploadForm] = useState(false);
+    const [HomeworkUploadForm, setHomeworkUploadForm] = useState(0);
+    const [showOptions, setOptions] = useState(true);
     const [FilePopUp, setFilePopUp] = useState(false);
     const [FileExtension, setFileExtension] = useState();
     const [Search, setSearch] = useState("");
+    const [Popup, setPopUp] = useState(false);
+    const [deleteID, setDeleteID] = useState();
     let i = 0;
-
+    let matI = 0;
     //Fetch materilas for clicked lesson
-        const ClickLesson = async (key) => {
-                await fetch(Config.apiUrl+"/getMaterial/"+key)
+    const ClickLesson = async (key) => {
+
+        setShow(key);
+        if (showFiles === key) {
+            setShow(0);
+        }
+    }
+    useEffect(() => {
+        const LessonCourseFetch = async () => {
+            //fetch coruse name and thumbnail
+            await fetch(Config.apiUrl + "/course/" + location.state)
+                .then((response) => response.json())
+                .then((CourseResp) => {
+                    setCourse(CourseResp[0]);
+                })
+            //Fetch lesson for couse
+            await fetch(Config.apiUrl + "/getlesson/" + location.state)
+                .then((response) => response.json())
+                .then((LessonResp) => {
+                    setLesson(LessonResp);
+                });
+            await fetch(Config.apiUrl + "/getMaterial/" + location.state)
                 .then((response) => response.json())
                 .then((MaterialsResp) => {
                     setMatetials(MaterialsResp);
                 })
-                setShow(key);
-                if(showFiles === key) {
-                    setShow(0);
-                }
-        }
-    useEffect(()=> {
-        const LessonCourseFetch = async () => {
-            //fetch coruse name and thumbnail
-            await fetch(Config.apiUrl+"/course/"+location.state)
-            .then((response) => response.json())
-            .then((CourseResp) => {
-                setCourse(CourseResp[0]);
-            })
-            //Fetch lesson for couse
-            await fetch(Config.apiUrl+"/getlesson/"+location.state)
-            .then((response) => response.json())
-            .then((LessonResp) => {
-                setLesson(LessonResp);
-            });  
+
+            await fetch(Config.apiUrl + "/gethomework/" + location.state)
+                .then((response) => response.json())
+                .then((HomeResp) => {
+                    setHomework(HomeResp);
+                })
+            await fetch(Config.apiUrl + "/gethomeworkUpload/" + location.state + "/" + props.id)
+                .then((response) => response.json())
+                .then((HomeResp) => {
+                    setHomeworkUploads(HomeResp);
+                })
+
         }
         LessonCourseFetch();
-    }, [])
 
-    function useOutsideAlerter (ref) {
+    }, [])
+    const DeleteLesson = async (a) => {
+        setPopUp(false);
+        await axios.delete(Config.apiUrl + "/lesson/" + deleteID)
+            .then((response) => {
+                console.log(response);
+            })
+    }
+    const DeleteMaterial = async () => {
+        setHomeworkUploadForm(0); 
+        await axios.delete(Config.apiUrl + "/Material/" + deleteID)
+            .then((response) => {
+                console.log(response);
+            })
+    }
+    console.log(HomeworkUploads);
+    function useOutsideAlerter(ref) {
         useEffect(() => {
-            if(FileUploadForm === true || FilePopUp === true) {
+           
                 function handleClickOutside(event) {
                     if (ref.current && !ref.current.contains(event.target)) {
-                      setFileUploadForm(false);
-                      setFilePopUp(false);
+                        setFileUploadForm(false);
+                        setFilePopUp(false);
+                        setHomeworkUploadForm(0);
                     }
-                  }
-                  document.addEventListener("mousedown", handleClickOutside);
-                  return () => {
+                }
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => {
                     document.removeEventListener("mousedown", handleClickOutside);
-                  };
-            }
-          });
+                };
+         
+        });
     }
-      return (
-    <>
+    function a() {
+        return ("")
+    }
+    return (
+        <>
             <section className="Course">
                 {/*Search bar*/}
                 <div className="SearchBar" >
-                        <button className={Search === "" ? "" : "close"}onClick={() => setSearch("")}><FontAwesomeIcon icon={Search === "" ? faMagnifyingGlass : faXmark} /></button>   
-                        
-                        <input placeholder="Search" onChange={(e) => setSearch(e.target.value)}/>
-                        <div className="Card" id={Search != "" ? "opened" : ""}>
+                    <button className={Search === "" ? "" : "close"} onClick={() => setSearch("")}><FontAwesomeIcon icon={Search === "" ? faMagnifyingGlass : faXmark} /></button>
+
+                    <input placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
+                    <div className="Card" id={Search != "" ? "opened" : ""}>
                         {Lesson.map((course) => {
-                        
-                            
-                            if(course.name.toLowerCase().includes(Search) === true  || course.name.toUpperCase().includes(Search.toUpperCase()) === true && Search != "" ) {
-                                return(
+
+
+                            if (course.name.toLowerCase().includes(Search) === true || course.name.toUpperCase().includes(Search.toUpperCase()) === true && Search != "") {
+                                return (
                                     <Link to="/course" state={course.id}>
-                                    <div>
-                                        <img src={require("../../components/img/"+course.thumbnail)} alt="" />
-                                        <div className="Text">
-                                            
+                                        <div>
+
+                                            <div className="Text">
+
                                                 <h2>{course.name}</h2>
-                                               
+
+                                            </div>
+
                                         </div>
-                                       
-                                    </div>
                                     </Link>
-                                    )
+                                )
                             } else {
-                            
+
                                 i++;
-                                if(i === 1) {
-                                    return(<p>No result</p>)
-                                } 
-                                
+                                if (i === 1) {
+                                    return (<p>No result</p>)
+                                }
+
                             }
-                            
+
                         })}
-                            
-                           
-                        </div>
+
+
                     </div>
+                </div>
                 {/*Course name*/}
-                
+
                 <div className="CourseHead">
-                    <img src={Course.thumbnail ? require("../../components/img/"+Course.thumbnail): ""} alt="" />
+                    <div className="CourseInfo">
+                        <img src={Course.thumbnail ? require("../../components/img/" + Course.thumbnail) : ""} alt="" />
                         <h1>{Course.name}</h1>
-              
-                    {/*If user is profesor show button for upload*/
-                    props.role === 2 ? 
-                    <>
-                        <a><button onClick={()=> setFilePopUp(!FilePopUp)}>Dodaj fajl <FontAwesomeIcon icon={faPlus}/></button></a>
-                        <a><button onClick={()=> setFileUploadForm(!FileUploadForm)}>Dodaj Lekciju <FontAwesomeIcon icon={faPlus}/></button></a>
-                    </>
-                    : props.role === 1 ? <a href={Config.storageUrl+"/kurs/scormcontent/index.html"}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay}/></button></a> : ""
-                    }
+                    </div>
+
+                    <div className="CourseBtn">
+                        {/*If user is profesor show button for upload*/
+                            props.role === 2 && filter === 0 ?
+                                <>
+                                    <a><button onClick={() => setFilePopUp(!FilePopUp)}>Dodaj fajl <FontAwesomeIcon icon={faPlus} /></button></a>
+                                    <a><button onClick={() => setFileUploadForm(!FileUploadForm)}>Dodaj Lekciju <FontAwesomeIcon icon={faPlus} /></button></a>
+
+                                </>
+                                : props.role === 2 && filter === 1 ?
+                                    <>
+
+                                        <a><button onClick={() => setHomeworkUploadForm("prf")}>Dodaj domaci<FontAwesomeIcon icon={faPlus} /></button></a>
+                                    </>
+                                    : props.role === 2 && filter === 2 ?
+                                        <>
+
+                                            <a><button onClick={() => setFileUploadForm(!FileUploadForm)}>Dodaj test<FontAwesomeIcon icon={faPlus} /></button></a>
+                                        </>
+
+                                        : props.role === 1 ? <a href={"./kurs.html"}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay} /></button></a> : ""
+                        }
+                    </div>
+
                 </div>
                 {/*Filter*/}
-                    <div className="FilterOptions">               
-                        <div onClick={()=>setFilter(0)} className={filter === 0 ? "clicked" : ""}>Lekcije</div>
-                        <div onClick={()=>setFilter(1)} className={filter === 1 ? "clicked" : ""}>Domaci</div>
-                        <div onClick={()=>setFilter(2)} className={filter === 2 ? "clicked" : ""}>Testovi</div>
-                    </div>     
+                <div className="FilterOptions">
+                    <div onClick={() => setFilter(0)} className={filter === 0 ? "clicked" : ""}>Lekcije</div>
+                    <div onClick={() => setFilter(1)} className={filter === 1 ? "clicked" : ""}>Domaci</div>
+                    <div onClick={() => setFilter(2)} className={filter === 2 ? "clicked" : ""}>Testovi</div>
+                </div>
                 {
                     filter === 0 ?
-                    //Lessons map
-                   Lesson.map((item) => {   
-                        let lessonId = item.id;   
-                            return(                        
-                            
-                                <div className="Ishod">
-                                    <h1>{item.section}</h1>
-                                    <div className="lesson"  key={item.id}>
-                                        <div className="Info"  onClick={() => ClickLesson(item.id)} id={showFiles === item.id ? "opened" : ""}>
-                                            {/*Lesson icon*/}
-                                            <span>
-                                                <FileSvg/>
-                                            </span>
-                                            {/*Lesson Name*/}
-                                                <div className="Text">
-                                                    <h3>{item.name}</h3>
+                        //Lessons map
+                        Lesson.map((item) => {
+                            let lessonId = item.id;
+
+                            if (props.role === 2 || (props.role === 1 && item.hide === 1)) {
+                                return (
+
+                                    <div className="Ishod" >
+                                        <h1>{item.section}</h1>
+                                        <div className="lesson" key={item.id}>
+                                            <div className="Info" id={showFiles === item.id ? "opened" : ""}>
+                                                {/*Lesson icon*/}
+                                                <span onClick={() => ClickLesson(item.id)}>
+                                                    <FileSvg />
+                                                </span>
+                                                {/*Lesson Name*/}
+                                                <div className="Text" onClick={() => ClickLesson(item.id)}>
+                                                    <h3>{item.name}{props.role === 2 && item.hide === 2 ? " - Sakriven" : ""}</h3>
                                                     <p>{moment(item.created_at).format('DD/MM/YYYY')}</p>
                                                 </div>
-                                                <img src={leftArrow} alt="" className="LeftArrow" id={showFiles === item.id ? "opened" : ""}/>
-                                        </div>
-                                        {/*Files div*/}
-                                        <div  id="files" className={showFiles === item.id ? "opened" : ""} key={item.id}>
-                                            <ul>
                                                 {
-                                                //Materials map
-                                                Matetials.map((item) => {
+                                                    props.role === 2 ?  <div className="Actions">
+                                                    {
+                                                        showOptions === true ? <><img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
+                                                            <FontAwesomeIcon className="Dots" onClick={() => { setOptions(!showOptions); ClickLesson(0); }} icon={faEllipsisVertical} size="1x" /></> : <><button><FontAwesomeIcon icon={faEye} color="red" size="1x" /> Hide</button>
+                                                            <button onClick={() => { setPopUp(true); setDeleteID(lessonId);}}><FontAwesomeIcon icon={faTrash} color="red" size="1x" /> Delete</button><button><FontAwesomeIcon onClick={() => setOptions(true)} icon={faXmark} color="red" size="1x" /></button></>
+                                                    }
 
-                                                    if(item.lesson_id === lessonId) {
-                                                        //if material is file
-                                                        if(item.file_path != null) {
-                                                            //get file extension
-                                                            let fileName = item.file_path;
-                                                            let extension = fileName.split(".");
-                                                            return (
-                                                                <li>        
-                                                                    <img onClick={() => {setMaterialVeiw(fileName); setFileExtension(extension[1]);}} src={require("../../components/img/"+extension[1]+".png")} alt="" />
-                                                                    <h2>{item.file_path}</h2>
-                                                                    <a href={Config.apiUrl+"/download/"+item.file_path}><DownloadSvg/></a>
-                                                                    
-                                                                </li>
-                                                            );
-                                                        } 
-                                                        // if material is link
-                                                        if(item.url != null) {
-                                                            return (
-                                                                <li>  
-                                                                    <a href={item.url}>{item.url}</a>
-                                                                </li>
-                                                            );
-                                                        }
-                                                    } 
-                                                })
+
+                                                </div>
+                                                : <img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
                                                 }
-                                                { /*If material dose not exist*/ Matetials.length === 0 ? <h1>Nema fajlova</h1> : ""}
-                                            </ul>
+                                               
+                                            </div>
+
+                                            {/*Files div*/}
+                                            <div id="files" className={showFiles === item.id ? "opened" : ""} key={item.id}>
+                                                <ul>
+                                                    {
+                                                        //Materials map
+                                                        Matetials.filter(mat => mat.lesson_id === lessonId).map((material) => {
+                                                            let matId = material.id;
+                                                            //if material is file
+                                                            if (material.file_path != null) {
+                                                                //get file extension
+                                                                let fileName = material.file_path;
+                                                                let extension = fileName.split(".");
+                                                                return (
+                                                                    <li>
+                                                                        <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/" + extension[1] + ".png")} alt="" />
+                                                                        <p>{material.file_path}</p>
+                                                                        <div className="Actions">
+                                                                            {
+                                                                                props.role === 2 ? <button className="delete" onClick={() => setPopUp("material")}><FontAwesomeIcon onClick={() => setDeleteID(matId)} icon={faTrash} color="red" size="5x"/> Delete</button> :""
+                                                                            }
+                                                                            
+                                                                            <a href={Config.apiUrl + "/download/" + material.file_path}><DownloadSvg /></a>
+                                                                        </div>
+
+
+                                                                    </li>
+                                                                );
+                                                            }
+                                                            // if material is link
+                                                            if (material.url != null) {
+                                                                return (
+                                                                    <li>
+                                                                        <a href={material.url}>{material.url}</a>
+                                                                    </li>
+                                                                );
+                                                            }
+
+                                                        })
+
+                                                    }
+                                                    {Matetials.filter(mat => mat.lesson_id === lessonId).length < 1 ? <h1>Nema fajlova</h1> : ""}
+
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                              </div>
-                                  );
-                    }) : ""
+                                );
+                            } else if (props.role === 1 && item.hide != 1) {
+
+                            }
+                        }) : filter === 1 ?
+                            Homework.map((item) => {
+                                let lessonId = item.id;
+                                return (
+
+                                    <div className="Ishod">
+                                        <h1>{item.section}</h1>
+                                        <div className="lesson" id={HomeworkUploads.filter(mat => mat.homework_id === lessonId).length < 1 ? "" : ""} key={item.id}>
+                                            <div className="Info" onClick={() => ClickLesson(item.id)} id={showFiles === item.id ? "opened" : ""}>
+                                                {/*Lesson icon*/}
+                                                <span>
+                                                    <FileSvg />
+                                                </span>
+                                                {/*Lesson Name*/}
+                                                <div className="Text">
+                                                    <h3>{item.name}</h3>
+                                                    <p>{"deadline: " + moment(item.deadline).format('DD/MM/YYYY')}</p>
+                                                </div>
+                                                <img src={leftArrow} alt="" className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
+                                            </div>
+                                            {/*Files div*/}
+                                            <div id="files" className={showFiles === item.id ? "opened" : ""} key={item.id}>
+                                                <h1>Opis</h1>
+                                                <p>{item.description}</p>
+                                                {
+                                                    props.role ===1 ?
+                                                    <>
+                                                    <hr />
+                                                <p>Moji domaći:</p>
+                                                <ul>
+                                                    {
+                                                        //Materials map
+                                                        HomeworkUploads.filter(mat => mat.homework_id === lessonId).map((item) => {
+                                                            i += 1;
+                                                            //if material is file
+                                                            if (item.file_path != null) {
+                                                                //get file extension
+                                                                let fileName = item.file_path;
+                                                                let extension = fileName.split(".");
+                                                                return (
+                                                                    <li>
+                                                                        <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/" + extension[1] + ".png")} alt="" />
+                                                                        <p>{item.file_path}</p>
+                                                                        <a href={Config.apiUrl + "/download/" + item.file_path}><DownloadSvg /></a>
+
+                                                                    </li>
+                                                                );
+                                                            }
+                                                            // if material is link
+                                                            if (item.url != null) {
+                                                                return (
+                                                                    <li>
+                                                                        <a href={item.url}>{item.url}</a>
+                                                                    </li>
+                                                                );
+                                                            }
+                                                            if (matI === 0) {
+                                                                return (<h1>Nema fajlova</h1>)
+                                                            }
+                                                        })
+
+                                                    }
+
+
+                                                </ul>
+                                                    </>
+                                                    : ""
+                                                }
+                                                
+                                                {/*<form action={Config.apiUrl+"/homeworkUpload"} method="POST" enctype="multipart/form-data">
+                                            <input type="file" name="files[]"/>
+                                            <input type="text" name="homework_id" value={lessonId} hidden/>
+                                            <input type="text" name="user_id" value={props.id} hidden/>
+                                            <button type="submit">Upload your homework</button>
+
+                                        </form>
+                                        <div className="dargDrop" >
+                                            <form >
+                                                <FileUploader name="file"  multiple fileOrFiles/>
+                                                <p>Darg & Drop your files here</p>
+                                            </form> 
+                                        </div>*/}
+                                                <br />
+                                                {props.role === 1 ? <button id="PredajDomaci" onClick={() => setHomeworkUploadForm(lessonId)}>Predaj domaći</button> : null}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                            : ""
                 }
-                {/*If lesson dosent exist*/ Lesson.length > 0 ? "" : filter === 0 ? <div className="NoLes"><img className="empty"src={EmptyState}/><p className="NoLesson">Trenutno nema lekcija</p></div>: null}
-                {/*If lesson dosent exist*/ Lesson.length < 0 ? "" : filter === 1 ? <div className="NoLes"><img className="empty"src={EmptyState}/><p className="NoLesson">Trenutno nema domacih zadataka</p></div>: null}
-                {/*If lesson dosent exist*/ Lesson.length < 0 ? "" : filter === 2 ? <div className="NoLes"><img className="empty"src={EmptyState}/><p className="NoLesson">Trenutno nema tsestova</p></div>: null}
+                {/*If lesson dosent exist*/ Lesson.filter(mat => mat.hide === 1) > 0 && filter === 0 ? "": Lesson.filter(mat => mat.hide === 1) <= 0 && filter === 0 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema lekcija</p></div> : null}
+                {/*If lesson dosent exist*/ Homework.length > 0 ? "" : filter === 1 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema domacih zadataka</p></div> : null}
+                {/*If lesson dosent exist*/ Lesson.length < 0 ? "" : filter === 2 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema tsestova</p></div> : null}
 
                 <br /><br /><br /><br /><br /><br /><br />
             </section>
             {/*Upload forms*/}
-            <div  className="PopUpCont" id={FileUploadForm === true ? "opened" : FilePopUp === true ? "opened" : ""}>
+            <div className="PopUpCont" id={FileUploadForm === true ? "opened" : FilePopUp === true ? "opened" : HomeworkUploadForm != 0 ? "opened" : ""}>
                 <div ref={ref}>
-                    <LessonAdd data={FileUploadForm === true ? "lesson" : FilePopUp === true ? "file" : ""} les={Lesson}/>
+                    <LessonAdd id={props.id} role={props.role} hmId={HomeworkUploadForm} data={FileUploadForm === true ? "lesson" : FilePopUp === true ? "file" : HomeworkUploadForm > 0 ? "homework" : HomeworkUploadForm === "prf" ? "homeworkPrf": null} les={Lesson} />
                 </div>
             </div>
-        {/*HEADER for mobile*/}
-        <div className="MobHeader" >
-            <img src={Logo} alt="" />
-            <FontAwesomeIcon icon={faMagnifyingGlass} size="1x" />
-        </div>
-        {/*material view*/}
-        <div className="Image" id={MaterialVeiw != "false" ? "opened" : ""}>
-            <button onClick={() => setMaterialVeiw("false")}><FontAwesomeIcon icon={faXmark} size="3x"></FontAwesomeIcon></button>
-                {FileExtension === "png" ? <img src={Config.storageUrl+MaterialVeiw} alt="" />
-                 : FileExtension === "mp4" ? 
-                 <Media>
-                    <Video loading="visible" controls preload="true">
-                        <video loading="visible" src={Config.storageUrl+MaterialVeiw} preload="none" data-video="0" controls />
-                    </Video>
-                </Media> : ""}         
-        </div>
-    </>
-  );
+            {/*HEADER for mobile*/}
+            <div className="MobHeader" >
+                <img src={Logo} alt="" />
+                <FontAwesomeIcon icon={faMagnifyingGlass} size="1x" />
+            </div>
+            {/*material view*/}
+            <div className="Image" id={MaterialVeiw != "false" ? "opened" : ""}>
+                <button onClick={() => setMaterialVeiw("false")}><FontAwesomeIcon icon={faXmark} size="3x"></FontAwesomeIcon></button>
+                {FileExtension === "png" || "jpg" ? <img src={Config.storageUrl + MaterialVeiw} alt="" />
+                    : FileExtension === "mp4" ?
+                        <Media>
+                            <Video loading="visible" controls preload="true">
+                                <video loading="visible" src={Config.storageUrl + MaterialVeiw} preload="none" data-video="0" controls />
+                            </Video>
+                        </Media> : ""}
+            </div>
+
+
+
+            <div className="PopUp" id={Popup != false ? "opened" : ""}>
+                <div className="LogoutAlert">
+                    <p>Do you want to delete this lesson</p>
+                    <div className="Buttons">
+                        
+                        <button id="yes" onClick={() => { Popup === "material" ? DeleteMaterial() : DeleteLesson(deleteID)}}>Yes</button>
+                        <button id="no" onClick={() => setPopUp(false)}>No</button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default Course;

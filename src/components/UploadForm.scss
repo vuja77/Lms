@@ -20,24 +20,24 @@
         padding: 30px 40px;
         text-align: center;
         display: block;
+    
         &#opened {
             display: block;
         }
         h1 {
             padding-bottom: 20px;
         }
-        input {
-            padding: 5px 45px 5px 15px;
+        input, select {
+            padding: 5px 0px 5px 20px;
             border: 1px solid #DFE5F1;
             border-radius: 10px;
             margin-right: 3 0px;
+            width: 200px;
+         
+            
         }
         select {
-            padding: 5px 45px 5px 15px;
-            width: 200px;
-            border-radius: 10px;
-            border: 1px solid #DFE5F1;
-            margin-left: 30px;
+            margin-top: 10px;    
         }
       
            
@@ -142,12 +142,12 @@
         .AddLesson, .AddFile {
         font-family: Nunito;
         width: 100%;
-        border-radius: 20px 20px 0px 0px;
-        max-height: 70%;
+        border-radius: 0px;
+        min-height: 100%;
        padding-left: 0px;
        padding-right: 0px;
        position: absolute;
-       bottom: 0px;
+      top: 100px;
        left: 0px;
        .Helper {
         flex-direction: column-reverse;

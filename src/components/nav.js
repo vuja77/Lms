@@ -1,13 +1,15 @@
 import Logo from "./img/logo.svg";
 import "./nav.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faDesktop,faCalendarDays, faBook, faGear, faUser, faArrowRightFromBracket,faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons"
+import {faDesktop,faCalendarDays, faBook, faArrowRightFromBracket, faCog} from "@fortawesome/free-solid-svg-icons"
 import { Outlet, Link } from "react-router-dom";
 import Cookies from 'universal-cookie';
-import UserPhoto from "./img/user-photo.png";
+import UserPhoto from "./img/user.jpg";
 import { useState } from "react";
-import Config from "../Config";
+import Config from "../Config.js.example";
+import LeftArrow from "./img/LeftArrow.svg"
 import { useLocation } from "react-router-dom";
+
 function Nav(props) {
   const location = useLocation();
   const [Popup, setPopUp] = useState(false);
@@ -16,6 +18,7 @@ function Nav(props) {
     cookies.remove('token');
     window.location =Config.homePageUrl;
 
+  
 };
   return (
     <>
@@ -25,13 +28,15 @@ function Nav(props) {
             <h1>ETŠ</h1>
         </div>
         <ul>
-            <li className='active'><FontAwesomeIcon icon={faDesktop} /> Dashboard</li>
-          <li><FontAwesomeIcon icon={faCalendarDays} color='' /> Calendar</li>
-          <li><FontAwesomeIcon icon={faBook} /> Course</li>
-          <li><FontAwesomeIcon icon={faGear} /> Setting</li>
+        <Link to="/"><li className={location.pathname === "/" ? "active" : ""}><FontAwesomeIcon icon={faDesktop} /> Dashboard</li></Link>
+          <Link to="calendar"><li className={location.pathname === "/calendar" ? "active" : ""}><FontAwesomeIcon icon={faCalendarDays} color='' /> Calendar</li></Link>
+          <Link to="courses"><li className={location.pathname === "/courses" ? "active" : location.pathname === "/course" ? "active" : ""}><FontAwesomeIcon icon={faBook} /> Course</li></Link>
+          <Link to="setting"><li className={location.pathname === "/setting" ? "active" : ""}><FontAwesomeIcon icon={faCog} /> Setting</li></Link>
+
         </ul>
         <ul id="LogOut">
-          <li className="UserLable">
+          <Link to="profile">
+          <li  id="UserLable" className={location.pathname === "/profile" ? "active" : ""}>
           <img src={UserPhoto} alt="" />
           <div className="text">
             <h4>{props.data}</h4>
@@ -39,22 +44,29 @@ function Nav(props) {
           </div>
            
           </li>
+          </Link>
+          
           <li onClick={()=> setPopUp(true)}><FontAwesomeIcon icon={faArrowRightFromBracket} /> Log out</li>
         </ul>
     </nav>
 
     <div className='MobileNav'>
        <ul>
-          <li className='active'><FontAwesomeIcon icon={faDesktop} /></li>
-          <li><FontAwesomeIcon icon={faCalendarDays} color='' /></li>
+       <Link to="/"><li className={location.pathname === "/" ? "active" : ""}><FontAwesomeIcon icon={faDesktop} /></li></Link>
+          <Link to="courses"><li className={location.pathname === "/courses" ? "active" : location.pathname === "/course" ? "active" : ""}><FontAwesomeIcon icon={faBook} /></li></Link>
+
+          <Link to="calendar"><li className={location.pathname === "/calendar" ? "active" : ""}><FontAwesomeIcon icon={faCalendarDays} color='' /></li></Link>
+
     
-          <li><FontAwesomeIcon icon={faUser} /></li>
         </ul>
     </div>
     <Outlet />
     <div className="MobHeader" >
-    <Link to="/"><img src={Logo} /></Link>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size="1x" />
+    
+    {location.pathname === "/" ? <Link to="/"><img src={Logo} /></Link> : location.pathname === "/course" ? <Link to="/"><img className="courseArrow"src={LeftArrow} /></Link>:location.pathname === "/profile" ? <Link to="/"><img className="courseArrow"src={LeftArrow} /></Link>:<Link to="/"><img className="courseArrow"src={LeftArrow} /></Link>}
+    <h3>{location.pathname === "/" ? "LMS" : location.pathname === "/course" ? "Course": location.pathname === "/profile" ? "Profile":"Strana u izradi"}</h3>
+    {location.pathname != "/profile" ?<Link to="profile"><img src={UserPhoto} className="UserPhoto"/></Link> : location.pathname === "/profile" ? <FontAwesomeIcon icon={faCog}/>: ""}
+            
     </div>
     <div className="PopUp" id={Popup === true ? "opened" : ""}>
         <div className="LogoutAlert">

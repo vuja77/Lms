@@ -459,14 +459,13 @@ function reportAnswer(data) {
 
 function getLMSData() {
   var data = null;
-
   if(!cache) {
     data = LMSProxy.GetDataChunk();
-
+    console.log(data);
     var result = data
       ? decompress(data)
       : {};
-
+      
     return result;
   }
 

@@ -3,22 +3,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass, faXmark} from "@fortawesome/free-solid-svg-icons"
 import Calendar from "../../components/img/Calendar.png";
 import Pedagog from "../../components/img/Pedagog.png";
-import Logo from "../../components/img/logo.svg";
+
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LoadingScreen from "../../components/LoadingScreen";
-import Config from "../../Config";
+import Config from "../../Config.js.example";
 import { memo } from "react";
-import Matematika from "../../components/img/Programiranje.png"
+
+import LessonAdd from "../../components/UploadForm";
+
 function Student(props) {
     const ref = useRef();
-    const [Loading, setLoading] = useState(true);
+    const reminders = useRef();
+    const [Loading, setLoading] = useState(false);
     const [filter, setFilter] = useState(0);
     const [MyCourse, setCourse] = useState([]);
     const [Search, setSearch] = useState("");
-    const [Scroll, setScroll] = useState();
+    const [Scroll, setScroll] = useState(0);
+    const [LessonPopUp, setPopUp] = useState(false);
+
     let i = 0;
     let a = 0;
     //Loading Screeen
@@ -36,7 +41,7 @@ function Student(props) {
         }
          fetchCourse();
     }, [props.data1]);
- 
+  
      return (
         <>
         {Loading === true? <LoadingScreen/> : ""}
@@ -46,10 +51,10 @@ function Student(props) {
                         
                         <input placeholder="Search" onChange={(e) => setSearch(e.target.value)}/>
                         <div className="Card" id={Search != "" ? "opened" : ""}>
-                        {MyCourse.map((course) => {
-                        
+                        {MyCourse.filter(course => course.name.toLowerCase().includes(Search)  || course.name.toUpperCase().includes(Search.toUpperCase())).map((course) => {
                             
-                            if(course.name.toLowerCase().includes(Search) === true  || course.name.toUpperCase().includes(Search.toUpperCase()) === true && Search != "" ) {
+                            i+=1;
+                            
                                 return(
                                     <Link to="/course" state={course.id}>
                                     <div>
@@ -63,22 +68,16 @@ function Student(props) {
                                     </div>
                                     </Link>
                                     )
-                            } else {
                             
-                                i++;
-                                if(i === 1) {
-                                    return(<p>No result</p>)
-                                } 
-                                
-                            }
                             
                         })}
-                            
+                        {i<1?<p>Nema rezlutata pretrage</p>: ""}
                            
                         </div>
                     </div>
 
-                    <div className="Reminders">
+                    <div className="Reminders" 
+                    >
                         <div className="TestReminder">
                             <div>
                                 <img src={Calendar} alt="" />           
@@ -98,6 +97,10 @@ function Student(props) {
                                     <button>Pozovite Pedagoga</button>
                                 </div>
                         </div>
+                    </div>
+                    <div className="Dots">
+                        <span id={Scroll > 310 ?"" : "active"} onClick={() => reminders.current.scrollLeft = 0}></span>
+                        <span id={Scroll < 310 ?"" : "active"} onClick={() => reminders.current.scrollLeft = 312}></span>
                     </div>
                     <h1>Moduli</h1>
                         {/*Filter Options*/}
@@ -143,10 +146,9 @@ function Student(props) {
                             
                             })
                         }
-                        </div>
-                            
-              
+                        </div>              
             </section>
+       
     </>
   );
 }

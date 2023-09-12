@@ -8,18 +8,18 @@ section.CenterSection {
     position: relative;
     height: 100vh;
     font-family: Nunito;
- 
+
     .MobHeader, .MoblieNav {
         display: none;
     }
-    h1 {
+   /* h1 {
         align-self: flex-start;
         margin-left: 60px;
         color: #141736;
         font-family: Nunito;
         font-size: 32px;
-    }
-    .SearchBar {
+    }*/
+   /* .SearchBar {
         width: 90%;
         border-bottom: 2px solid #DFE5F1;
         padding: 25px;
@@ -33,15 +33,12 @@ section.CenterSection {
         }
       
     }
-    
+    */
     .Reminders {
-        padding: 50px;
-        display: flex;
-        flex-direction: row;
-        gap: 30px;
-        flex-wrap: wrap;
+      //  padding: 50px;
+        
         div.TestAdd,  div.LessonAdd, div.HomeworkReminder{
-            flex: 1 1;
+         
             display: flex;
             flex-direction: row;
             height: 100px;
@@ -108,14 +105,16 @@ height: 30px;
         width: 89%;
         border-radius: 30px;
         height: 60vh;
-       
+        .brake {
+            height: 150px;
+        }
         a {
             text-decoration: none;
             color: initial;
             flex: 5 5 200px;
-        
+           
         div.cls {
-        
+      
 
             border-radius: 30px;
             margin-top: 20px;
@@ -127,9 +126,9 @@ height: 30px;
             background-color: #fff;
             padding: 10px 25px;
             transition: 0.3s;
-            box-shadow: 0px 9px 52px 0px rgba(0, 0, 0, 0.05);
+          //  box-shadow: 0px 9px 52px 0px rgba(0, 0, 0, 0.05);
             border: 2px solid #DFE5F1;
-            svg {
+           img {
                 justify-self: flex-end;
             }
             div.Text {
@@ -166,9 +165,7 @@ height: 30px;
     section.CenterSection {
         width: 100vw;
         padding-top: 30px;
-        .SearchBar {
-            display: none;
-        }
+      
         .MobHeader {
    
         position: fixed;
@@ -192,6 +189,17 @@ height: 30px;
             height: 1.5em;
         }
     }
+    .Reminders {
+        //  padding: 50px;
+          
+          div.TestAdd,  div.LessonAdd, div.HomeworkReminder{
+            height: 80px;
+            min-width: 250px;
+            img {
+                width: 50px;
+            }
+          }
+        }
     }
     nav {
         display: none;
