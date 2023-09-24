@@ -39,21 +39,21 @@ function App() {
     } else {
       window.history.back();
     }
-  }, [0])
+  }, [1])
 
   return (
     <>
 
       <BrowserRouter basename={Config.basename}>
         <Routes>
-          <Route path="/" element={<><Nav data={userName} /> <SideBar /></>}>
-            <Route index element={userRole === 1 ? <Student data1={userClass} /> : userRole === 2 ? <Professor data={userID} /> : ""} />
+          <Route path="/" element={<><Nav data={userName} /> </>}>
+            <Route index element={userRole === 1 ? <><Student data1={userClass} /><SideBar role={userRole} /></> : userRole === 2 ? <><Professor data={userID} /><SideBar role={userRole} /></> : ""} />
             <Route path="profesor" element={<Professor />} />
             <Route path="calendar" element={""} />
             <Route path="courses" element={""} />
             <Route path="setting" element={""} />
-            <Route path="course" element={<Course role={userRole} id={userID} />} />
-            <Route path="profile" element={<Profile role={userRole} data={userName} mail={userMail} />} />
+            <Route path="course" element={<><Course role={userRole} id={userID} token={cookieValue} /></>} />
+            <Route path="profile" element={<><Profile role={userRole} data={userName} mail={userMail} /><SideBar role={userRole} /></>} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,6 +1,6 @@
 import "./Course.scss"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faEye, faMagnifyingGlass, faPlay, faPlus, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons"
+import { faEllipsisVertical, faEye, faEyeSlash, faMagnifyingGlass, faPlay, faPlus, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons"
 import Logo from "../../components/img/logo.svg";
 import { FileSvg, DownloadSvg } from "../../components/svg.js"
 import { useEffect, useState, useRef } from "react";
@@ -11,9 +11,10 @@ import leftArrow from "../../components/img/LeftArrow.svg";
 import EmptyState from "../../components/img/EmptyState.svg"
 import { Media, Video } from '@vidstack/player-react';
 import moment from 'moment';
+import { ToastContainer, toast } from 'react-toastify';
 
 import axios from "axios";
-
+import SideBar from "../../components/SideBar";
 function Course(props) {
     const ref = useRef(null);
     useOutsideAlerter(ref);
@@ -36,6 +37,8 @@ function Course(props) {
     const [deleteID, setDeleteID] = useState();
     let i = 0;
     let matI = 0;
+    const notify = (text) => toast.success(text);
+
     //Fetch materilas for clicked lesson
     const ClickLesson = async (key) => {
 
@@ -43,6 +46,13 @@ function Course(props) {
         if (showFiles === key) {
             setShow(0);
         }
+    }
+    const Lessonfetch = async () => {
+        await fetch(Config.apiUrl + "/getlesson/" + location.state)
+            .then((response) => response.json())
+            .then((LessonResp) => {
+                setLesson(LessonResp);
+            });
     }
     useEffect(() => {
         const LessonCourseFetch = async () => {
@@ -83,32 +93,55 @@ function Course(props) {
         setPopUp(false);
         await axios.delete(Config.apiUrl + "/lesson/" + deleteID)
             .then((response) => {
-                console.log(response);
+                Lessonfetch();
+                notify("Lekcija uspjesno obrisana");
+            })
+    }
+    const HideLesson = async (a) => {
+        setPopUp(false);
+
+        await axios.put(Config.apiUrl + "/lesson/" + a, {
+            hide: 2,
+        })
+            .then((response) => {
+                Lessonfetch();
+
+            })
+    }
+    const UnHideLesson = async (a) => {
+        setPopUp(false);
+
+        await axios.put(Config.apiUrl + "/lesson/" + a, {
+            hide: 1,
+        })
+            .then((response) => {
+                Lessonfetch();
+
             })
     }
     const DeleteMaterial = async () => {
-        setHomeworkUploadForm(0); 
+        setHomeworkUploadForm(0);
         await axios.delete(Config.apiUrl + "/Material/" + deleteID)
             .then((response) => {
-                console.log(response);
             })
     }
-    console.log(HomeworkUploads);
+
+
     function useOutsideAlerter(ref) {
         useEffect(() => {
-           
-                function handleClickOutside(event) {
-                    if (ref.current && !ref.current.contains(event.target)) {
-                        setFileUploadForm(false);
-                        setFilePopUp(false);
-                        setHomeworkUploadForm(0);
-                    }
+
+            function handleClickOutside(event) {
+                if (ref.current && !ref.current.contains(event.target)) {
+                    setFileUploadForm(false);
+                    setFilePopUp(false);
+                    setHomeworkUploadForm(0);
                 }
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => {
-                    document.removeEventListener("mousedown", handleClickOutside);
-                };
-         
+            }
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+
         });
     }
     function a() {
@@ -168,7 +201,6 @@ function Course(props) {
                                 <>
                                     <a><button onClick={() => setFilePopUp(!FilePopUp)}>Dodaj fajl <FontAwesomeIcon icon={faPlus} /></button></a>
                                     <a><button onClick={() => setFileUploadForm(!FileUploadForm)}>Dodaj Lekciju <FontAwesomeIcon icon={faPlus} /></button></a>
-
                                 </>
                                 : props.role === 2 && filter === 1 ?
                                     <>
@@ -181,7 +213,7 @@ function Course(props) {
                                             <a><button onClick={() => setFileUploadForm(!FileUploadForm)}>Dodaj test<FontAwesomeIcon icon={faPlus} /></button></a>
                                         </>
 
-                                        : props.role === 1 ? <a href={"./kurs.html"}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay} /></button></a> : ""
+                                        : props.role === 1 ? <a href={"./kurs.html?token=" + props.token + "&scorm_filename=" + Course.scorm_filename}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay} /></button></a> : ""
                         }
                     </div>
 
@@ -201,9 +233,9 @@ function Course(props) {
                             if (props.role === 2 || (props.role === 1 && item.hide === 1)) {
                                 return (
 
-                                    <div className="Ishod" >
-                                        <h1>{item.section}</h1>
-                                        <div className="lesson" key={item.id}>
+                                    <div className="Ishod">
+                                        {/**<h1>{item.section}</h1> */}
+                                        <div className="lesson" key={item.id} id={item.hide === 2 ? "hidden" : null}>
                                             <div className="Info" id={showFiles === item.id ? "opened" : ""}>
                                                 {/*Lesson icon*/}
                                                 <span onClick={() => ClickLesson(item.id)}>
@@ -215,18 +247,25 @@ function Course(props) {
                                                     <p>{moment(item.created_at).format('DD/MM/YYYY')}</p>
                                                 </div>
                                                 {
-                                                    props.role === 2 ?  <div className="Actions">
-                                                    {
-                                                        showOptions === true ? <><img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
-                                                            <FontAwesomeIcon className="Dots" onClick={() => { setOptions(!showOptions); ClickLesson(0); }} icon={faEllipsisVertical} size="1x" /></> : <><button><FontAwesomeIcon icon={faEye} color="red" size="1x" /> Hide</button>
-                                                            <button onClick={() => { setPopUp(true); setDeleteID(lessonId);}}><FontAwesomeIcon icon={faTrash} color="red" size="1x" /> Delete</button><button><FontAwesomeIcon onClick={() => setOptions(true)} icon={faXmark} color="red" size="1x" /></button></>
-                                                    }
+                                                    props.role === 2 ? <div className="Actions">
+                                                        {
+                                                            showOptions === item.id ?
+                                                                <>
+                                                                    <button onClick={() => { item.hide === 1 ? HideLesson(lessonId) : UnHideLesson(lessonId) }}><FontAwesomeIcon icon={item.hide === 1 ? faEye : faEyeSlash} color="red" size="1x" /> {item.hide === 1 ? "Hide" : "Show"}</button>
+                                                                    <button onClick={() => { setPopUp(true); setDeleteID(lessonId); }}><FontAwesomeIcon icon={faTrash} color="red" size="1x" /> Delete</button><button><FontAwesomeIcon onClick={() => setOptions(true)} icon={faXmark} color="red" size="1x" /></button></>
+                                                                :
+                                                                <>
+                                                                    <img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
+                                                                    <FontAwesomeIcon className="Dots" onClick={() => { setOptions(item.id); ClickLesson(0); }} icon={faEllipsisVertical} size="1x" />
+                                                                </>
+
+                                                        }
 
 
-                                                </div>
-                                                : <img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
+                                                    </div>
+                                                        : <img src={leftArrow} alt="" onClick={() => ClickLesson(item.id)} className="LeftArrow" id={showFiles === item.id ? "opened" : ""} />
                                                 }
-                                               
+
                                             </div>
 
                                             {/*Files div*/}
@@ -243,13 +282,13 @@ function Course(props) {
                                                                 let extension = fileName.split(".");
                                                                 return (
                                                                     <li>
-                                                                        <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/" + extension[1] + ".png")} alt="" />
+                                                                        <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/jpg.png")} alt="" />
                                                                         <p>{material.file_path}</p>
                                                                         <div className="Actions">
                                                                             {
-                                                                                props.role === 2 ? <button className="delete" onClick={() => setPopUp("material")}><FontAwesomeIcon onClick={() => setDeleteID(matId)} icon={faTrash} color="red" size="5x"/> Delete</button> :""
+                                                                                props.role === 2 ? <button className="delete" onClick={() => setPopUp("material")}><FontAwesomeIcon onClick={() => setDeleteID(matId)} icon={faTrash} color="red" size="5x" /> Delete</button> : ""
                                                                             }
-                                                                            
+
                                                                             <a href={Config.apiUrl + "/download/" + material.file_path}><DownloadSvg /></a>
                                                                         </div>
 
@@ -304,50 +343,50 @@ function Course(props) {
                                                 <h1>Opis</h1>
                                                 <p>{item.description}</p>
                                                 {
-                                                    props.role ===1 ?
-                                                    <>
-                                                    <hr />
-                                                <p>Moji domaći:</p>
-                                                <ul>
-                                                    {
-                                                        //Materials map
-                                                        HomeworkUploads.filter(mat => mat.homework_id === lessonId).map((item) => {
-                                                            i += 1;
-                                                            //if material is file
-                                                            if (item.file_path != null) {
-                                                                //get file extension
-                                                                let fileName = item.file_path;
-                                                                let extension = fileName.split(".");
-                                                                return (
-                                                                    <li>
-                                                                        <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/" + extension[1] + ".png")} alt="" />
-                                                                        <p>{item.file_path}</p>
-                                                                        <a href={Config.apiUrl + "/download/" + item.file_path}><DownloadSvg /></a>
+                                                    props.role === 1 ?
+                                                        <>
+                                                            <hr />
+                                                            <p>Moji domaći:</p>
+                                                            <ul>
+                                                                {
+                                                                    //Materials map
+                                                                    HomeworkUploads.filter(mat => mat.homework_id === lessonId).map((item) => {
+                                                                        i += 1;
+                                                                        //if material is file
+                                                                        if (item.file_path != null) {
+                                                                            //get file extension
+                                                                            let fileName = item.file_path;
+                                                                            let extension = fileName.split(".");
+                                                                            return (
+                                                                                <li>
+                                                                                    <img onClick={() => { setMaterialVeiw(fileName); setFileExtension(extension[1]); }} src={require("../../components/img/" + extension[1] + ".png")} alt="" />
+                                                                                    <p>{item.file_path}</p>
+                                                                                    <a href={Config.apiUrl + "/download/" + item.file_path}><DownloadSvg /></a>
 
-                                                                    </li>
-                                                                );
-                                                            }
-                                                            // if material is link
-                                                            if (item.url != null) {
-                                                                return (
-                                                                    <li>
-                                                                        <a href={item.url}>{item.url}</a>
-                                                                    </li>
-                                                                );
-                                                            }
-                                                            if (matI === 0) {
-                                                                return (<h1>Nema fajlova</h1>)
-                                                            }
-                                                        })
+                                                                                </li>
+                                                                            );
+                                                                        }
+                                                                        // if material is link
+                                                                        if (item.url != null) {
+                                                                            return (
+                                                                                <li>
+                                                                                    <a href={item.url}>{item.url}</a>
+                                                                                </li>
+                                                                            );
+                                                                        }
+                                                                        if (matI === 0) {
+                                                                            return (<h1>Nema fajlova</h1>)
+                                                                        }
+                                                                    })
 
-                                                    }
+                                                                }
 
 
-                                                </ul>
-                                                    </>
-                                                    : ""
+                                                            </ul>
+                                                        </>
+                                                        : ""
                                                 }
-                                                
+
                                                 {/*<form action={Config.apiUrl+"/homeworkUpload"} method="POST" enctype="multipart/form-data">
                                             <input type="file" name="files[]"/>
                                             <input type="text" name="homework_id" value={lessonId} hidden/>
@@ -371,7 +410,7 @@ function Course(props) {
                             })
                             : ""
                 }
-                {/*If lesson dosent exist*/ Lesson.filter(mat => mat.hide === 1) > 0 && filter === 0 ? "": Lesson.filter(mat => mat.hide === 1) <= 0 && filter === 0 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema lekcija</p></div> : null}
+                {/*If lesson dosent exist*/ Lesson.filter(mat => mat.hide === 1) > 0 && filter === 0 ? "" : Lesson.filter(mat => mat.hide === 1) <= 0 && filter === 0 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema lekcija</p></div> : null}
                 {/*If lesson dosent exist*/ Homework.length > 0 ? "" : filter === 1 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema domacih zadataka</p></div> : null}
                 {/*If lesson dosent exist*/ Lesson.length < 0 ? "" : filter === 2 ? <div className="NoLes"><img className="empty" src={EmptyState} /><p className="NoLesson">Trenutno nema tsestova</p></div> : null}
 
@@ -380,7 +419,7 @@ function Course(props) {
             {/*Upload forms*/}
             <div className="PopUpCont" id={FileUploadForm === true ? "opened" : FilePopUp === true ? "opened" : HomeworkUploadForm != 0 ? "opened" : ""}>
                 <div ref={ref}>
-                    <LessonAdd id={props.id} role={props.role} hmId={HomeworkUploadForm} data={FileUploadForm === true ? "lesson" : FilePopUp === true ? "file" : HomeworkUploadForm > 0 ? "homework" : HomeworkUploadForm === "prf" ? "homeworkPrf": null} les={Lesson} />
+                    <LessonAdd pozoviFunkciju={Lessonfetch} id={props.id} role={props.role} hmId={HomeworkUploadForm} data={FileUploadForm === true ? "lesson" : FilePopUp === true ? "file" : HomeworkUploadForm > 0 ? "homework" : HomeworkUploadForm === "prf" ? "homeworkPrf" : null} les={Lesson} />
                 </div>
             </div>
             {/*HEADER for mobile*/}
@@ -391,7 +430,7 @@ function Course(props) {
             {/*material view*/}
             <div className="Image" id={MaterialVeiw != "false" ? "opened" : ""}>
                 <button onClick={() => setMaterialVeiw("false")}><FontAwesomeIcon icon={faXmark} size="3x"></FontAwesomeIcon></button>
-                {FileExtension === "png" || "jpg" ? <img src={Config.storageUrl + MaterialVeiw} alt="" />
+                {FileExtension === "png" ? <img src={Config.storageUrl + MaterialVeiw} alt="" />
                     : FileExtension === "mp4" ?
                         <Media>
                             <Video loading="visible" controls preload="true">
@@ -406,12 +445,16 @@ function Course(props) {
                 <div className="LogoutAlert">
                     <p>Do you want to delete this lesson</p>
                     <div className="Buttons">
-                        
-                        <button id="yes" onClick={() => { Popup === "material" ? DeleteMaterial() : DeleteLesson(deleteID)}}>Yes</button>
+
+                        <button id="yes" onClick={() => { Popup === "material" ? DeleteMaterial() : DeleteLesson(deleteID) }}>Yes</button>
                         <button id="no" onClick={() => setPopUp(false)}>No</button>
                     </div>
                 </div>
             </div>
+
+            <ToastContainer />
+
+            <SideBar role={props.role} description={Course.description} lessons={Lesson.length} professor={Course.first_name + " " + Course.last_name} />
         </>
     );
 }

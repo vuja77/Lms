@@ -67,9 +67,11 @@ function LessonAdd(props) {
             .then((response) => {
                 console.log(response.data.id);
                 notify("Lekcija uspjesno kreirana, ponovo ucitaj stranu");
+                props.pozoviFunkciju();
                 
             });
           
+         
     }
 
 

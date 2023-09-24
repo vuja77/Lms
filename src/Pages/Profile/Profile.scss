@@ -14,18 +14,44 @@ section.CenterSection {
         display: flex;
         align-items: center;
         flex-direction: column;
-        img {
-            border-radius: 50%;
-            aspect-ratio: 1 / 1;
-            margin-top: -50px;
-            object-fit: cover;
+       
+        .UserPhoto {
+            position: relative;
             width: 200px;
+            height: 200px;
+            margin-top: -50px;
+
+            img {
+                border-radius: 50%;
+                aspect-ratio: 1 / 1;
+                object-fit: cover;
+                width: 200px;
+                position: absolute;
+            }
+            .ChosePhoto {
+                border-radius: 50%;
+                aspect-ratio: 1 / 1;
+                position: absolute;
+             
+                color: white;
+                cursor: pointer;
+                width: 100%;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                background-color: rgba(0, 0, 0, 0.5);
+                &#opened {
+                    display: flex;
+                }
+            }
+            
         }
+        
         button {
             border: none;
             padding: 10px;
             margin-left: 10px;
-        background-color: #211E61;
+            background-color: #211E61;
             color: white;
             border-radius: 10px;
             margin-top: 20px;

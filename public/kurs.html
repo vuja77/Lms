@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <iframe id="ifr" src="kurs2/scormcontent/index.html" frameborder="0"></iframe>
+    <iframe id="ifr" src="" frameborder="0"></iframe>
     <style>
         * {
             margin: 0px;
@@ -48,28 +48,23 @@
       'WriteToDebug',
         */
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const scormFilename = urlParams.get('scorm_filename');
+        const token = urlParams.get('token');
+
+        let iframe = document.querySelector("iframe");
+        iframe.setAttribute("src", "../api/storage/courses/"+ scormFilename +"/scormcontent/index.html");
+
 
         let setup = async () => {
-            let courseID = null
-
-            fetch("kurs2/imsmanifest.xml").then(async response => {
-                let parser = new DOMParser();
-                let xmlDoc = parser.parseFromString(await response.text(), "text/xml");
-                courseID = xmlDoc.getElementsByTagName("manifest")[0].getAttribute("identifier")
-            })
-
-
             window.SetDataChunk = (a) => {
-                console.log("SetDataChunk:")
-                console.log({ courseID, data: JSON.parse(a).d })
                 let b = JSON.parse(a).d;
 
                 fetch("api/set-value", {
                     method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({
-                        course_id: courseID,
-                        user_id: 1,
+                        scorm_filename: scormFilename,
                         data: JSON.parse(a).d
                     }),
                 })
@@ -84,22 +79,20 @@
 
             window.GetDataChunk = () => {
                 let result = null;
-                
+
                 const xhttp = new XMLHttpRequest();
                 xhttp.onload = function () {
-                    console.log("nigger")
-                   
                     let data = JSON.parse(this.responseText)
-
-                    result = JSON.stringify({d: data[0].data})
+                    result = JSON.stringify({ d: data[0].data })
                 }
-                xhttp.open("GET", "api/get-value/"+courseID+"/1", false);
+                xhttp.open("GET", "api/get-value/" + scormFilename, false);
+                xhttp.setRequestHeader("Authorization", `Bearer ${token}`)
                 xhttp.send();
 
                 return result
             };
 
-            
+
             window.ConcedeControl = window.history.back;
 
 

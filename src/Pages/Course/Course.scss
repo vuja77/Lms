@@ -256,7 +256,11 @@ section.Course {
             padding: 10px;
             padding-right: 30px;
             border-radius: 20px;
-    
+            &#hidden {
+                span {
+                    background-color: gray
+                }
+            }
             transition: 0.2s;
             &:hover {
             border: 2px solid #211E61;
@@ -306,7 +310,7 @@ section.Course {
             }
             span {
                 border-radius: 20px;
-                padding: 10px 30px;
+                padding: 5px 20px;
                 
                 background-color: #211E61;
 
