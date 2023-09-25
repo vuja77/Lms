@@ -213,7 +213,7 @@ function Course(props) {
                                             <a><button onClick={() => setFileUploadForm(!FileUploadForm)}>Dodaj test<FontAwesomeIcon icon={faPlus} /></button></a>
                                         </>
 
-                                        : props.role === 1 ? <a href={"./kurs.html?token=" + props.token + "&scorm_filename=" + Course.scorm_filename}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay} /></button></a> : ""
+                                        : props.role === 1 ? <a href={"../kurs.html?token=" + props.token + "&scorm_filename=" + Course.scorm_filename}><button>Zapocni kurs <FontAwesomeIcon icon={faPlay} /></button></a> : ""
                         }
                     </div>
 

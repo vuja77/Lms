@@ -53,14 +53,15 @@
         const token = urlParams.get('token');
 
         let iframe = document.querySelector("iframe");
-        iframe.setAttribute("src", "../api/storage/courses/"+ scormFilename +"/scormcontent/index.html");
+        
+        iframe.setAttribute("src", "../storage/courses/"+ scormFilename +"/scormcontent/index.html");
 
 
         let setup = async () => {
             window.SetDataChunk = (a) => {
                 let b = JSON.parse(a).d;
 
-                fetch("api/set-value", {
+                fetch("../api/set-value", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({
@@ -85,7 +86,7 @@
                     let data = JSON.parse(this.responseText)
                     result = JSON.stringify({ d: data[0].data })
                 }
-                xhttp.open("GET", "api/get-value/" + scormFilename, false);
+                xhttp.open("GET", "../api/get-value/" + scormFilename, false);
                 xhttp.setRequestHeader("Authorization", `Bearer ${token}`)
                 xhttp.send();
 
